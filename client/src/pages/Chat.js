@@ -124,13 +124,19 @@ function Chat({ user, receiver }) {
     window.open(`${API_URL}${url}`, "_blank");
   };
 
+  const isOnline = onlineUsers.includes(receiver ? receiver.id : null);
+
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h3>{receiver ? receiver.username : ""}</h3>
-        <span>
-          {onlineUsers.includes(receiver ? receiver.id : null) ? "Online" : "Offline"}
-        </span>
+        <div className="chat-header-avatar">
+          {(receiver?.username || "?").slice(0, 2).toUpperCase()}
+          <span className={`status-dot ${isOnline ? "status-online" : ""}`} />
+        </div>
+        <div className="chat-header-info">
+          <h3>{receiver ? receiver.username : ""}</h3>
+          <span className="chat-header-status">{isOnline ? "Online" : "Offline"}</span>
+        </div>
       </div>
 
       <div className="messages">
@@ -162,20 +168,38 @@ function Chat({ user, receiver }) {
         </p>
       ) : null}
 
+      {file ? (
+        <div className="file-preview">
+          <span>📎 {file.name}</span>
+          <div>
+            <button className="file-send" onClick={handleFileUpload}>Send</button>
+            <button className="file-cancel" onClick={() => setFile(null)}>✕</button>
+          </div>
+        </div>
+      ) : null}
+
       <div className="chat-input">
-        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-        {file ? <button onClick={handleFileUpload}>Send File</button> : null}
+        <label className="attach-button">
+          📎
+          <input
+            type="file"
+            hidden
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+        </label>
         <input
           type="text"
           value={text}
-          placeholder="Type a message..."
+          placeholder="Message likho..."
           onChange={(e) => {
             setText(e.target.value);
             handleTyping();
           }}
           onKeyPress={handleKeyPress}
         />
-        <button onClick={sendMessage}>Send</button>
+        <button className="send-button" onClick={sendMessage} aria-label="Send">
+          ➤
+        </button>
       </div>
     </div>
   );

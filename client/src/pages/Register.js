@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import "./Auth.css";
 
 function Register({ onRegisterSuccess }) {
   const [form, setForm] = useState({
@@ -8,54 +9,66 @@ function Register({ onRegisterSuccess }) {
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
-const API_URL = process.env.REACT_APP_API_URL;
-await axios.post(
-  `${API_URL}/auth/register`,
-  form
-);
-
-alert("Registration successful! Ab login karo.");
+      const API_URL = process.env.REACT_APP_API_URL;
+      await axios.post(`${API_URL}/auth/register`, form);
       onRegisterSuccess();
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: "300px", margin: "50px auto" }}>
-      <h2>Register</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
+    <form className="auth-form" onSubmit={handleSubmit}>
+      <h2 className="auth-form-title">Create account</h2>
+      <p className="auth-form-subtitle">Chatly join karo, 1 minute lagega</p>
+
+      {error && <div className="auth-error">{error}</div>}
+
+      <label className="auth-field">
+        <span>Username</span>
         <input
-          placeholder="Username"
+          placeholder="yourname"
           value={form.username}
           onChange={(e) => setForm({ ...form, username: e.target.value })}
-          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
+          required
         />
+      </label>
+
+      <label className="auth-field">
+        <span>Email</span>
         <input
-          placeholder="Email"
           type="email"
+          placeholder="you@example.com"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
-          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
+          required
         />
+      </label>
+
+      <label className="auth-field">
+        <span>Password</span>
         <input
-          placeholder="Password"
           type="password"
+          placeholder="••••••••"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
-          style={{ display: "block", width: "100%", marginBottom: "10px", padding: "8px" }}
+          required
         />
-        <button type="submit" style={{ width: "100%", padding: "10px" }}>
-          Register
-        </button>
-      </form>
-    </div>
+      </label>
+
+      <button className="auth-submit" type="submit" disabled={loading}>
+        {loading ? "Creating..." : "Register"}
+      </button>
+    </form>
   );
 }
 

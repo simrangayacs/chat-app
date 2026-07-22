@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
 // Get all users (for chat list)
 router.get("/users", async (req, res) => {
   try {
-    const User = require("../models/User");
+    const User = require("../models/UserModel");
     const users = await User.find({}, "username email _id");
     res.json(users);
   } catch (err) {

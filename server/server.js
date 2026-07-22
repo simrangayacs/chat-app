@@ -9,6 +9,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));   // 👈 YE NAYA ADD HUA
+app.use(cors({
+    origin: '*', // Isse aapka Vercel frontend backend se easily connect ho jayega
+    credentials: true
+}));
 
 const server = http.createServer(app);
 const io = new Server(server, {
